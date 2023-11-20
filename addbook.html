@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Add Book</title>
+</head>
+<body>
+  <h1>Add a New Book</h1>
+  <form action="/add-book" method="post">
+    <label for="title">Title:</label><br>
+    <input type="text" id="title" name="title"><br>
+    <label for="author">Author:</label><br>
+    <input type="text" id="author" name="author"><br>
+    <label for="genres">Genres (Comma-separated):</label><br>
+    <input type="text" id="genres" name="genres"><br>
+    <label for="rating">Rating:</label><br>
+    <input type="number" id="rating" name="rating" min="1" max="10"><br><br>
+    <input type="submit" value="Add Book">
+  </form>
+  <div id="bookList"></div>
+
+  <script>
+    
+    async function fetchBooks() {
+      try {
+        const response = await fetch('/display'); 
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const books = await response.json();
+
+        const bookListElem = document.getElementById('bookList');
+
+        books.forEach(book => {
+          const bookDiv = document.createElement('div');
+          bookDiv.classList.add('book');
+
+          const bookNameElem = document.createElement('h4');
+          bookNameElem.textContent = book.book_name;
+
+          const authorElem = document.createElement('p');
+          authorElem.textContent = `Author: ${book.author}`;
+
+          const genreElem = document.createElement('p');
+          genreElem.textContent = `Genres: ${book.genre.join(', ')}`;
+
+          const ratingElem = document.createElement('p');
+          ratingElem.textContent = `Rating: ${book.rating}/5`;
+
+          bookDiv.appendChild(bookNameElem);
+          bookDiv.appendChild(authorElem);
+          bookDiv.appendChild(genreElem);
+          bookDiv.appendChild(ratingElem);
+
+        
+          bookListElem.appendChild(bookDiv);
+        });
+      } catch (error) {
+        console.error('There was a problem fetching the book details:', error);
+      }
+    }
+
+    fetchBooks();
+  </script>
+</body>
+</html>
